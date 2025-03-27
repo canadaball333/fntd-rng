@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Present Opener</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+      color: #333;
+      text-align: center;
+      margin-top: 50px;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark {
+      background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+      color: #f0f4f8;
+    }
+
+    h1 {
+      color: #2a9d8f;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .button {
+      padding: 15px 30px;
+      font-size: 18px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      margin-top: 20px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .button:hover {
+      background-color: #45a049;
+      transform: scale(1.03);
+    }
+
+    select {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 20px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats {
+      margin-top: 40px;
+      font-size: 18px;
+    }
+
+    .stats span {
+      font-weight: bold;
+    }
+
+    
+    .inventory {
+      margin-top: 50px;
+      margin-left: 30px;
+      width: 200px;
+      position: fixed;
+      right: 0;
+      top: 100px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .inventory h2 {
+      font-size: 20px;
+      color: #2a9d8f;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+
+    .inventory .item {
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+   
+    .search-container {
+      margin-bottom: 20px;
+    }
+
+    
+
+    
+    input[type="checkbox"] {
+      accent-color: #2a9d8f;
+      width: 18px;
+      height: 18px;
+      margin-right: 5px;
+    }
+
+    label {
+      font-size: 16px;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    /* Rainbow text effect */
+    @keyframes rainbow {
+      0% {
+        color: red;
+      }
+
+      16% {
+        color: orange;
+      }
+
+      33% {
+        color: yellow;
+      }
+
+      50% {
+        color: green;
+      }
+
+      66% {
+        color: blue;
+      }
+
+      83% {
+        color: indigo;
+      }
+
+      100% {
+        color: violet;
+      }
+    }
+
+    .rainbow-text {
+      animation: rainbow 2s linear infinite;
+    }
+
+    .toggle-container {
+      position: fixed;
+      top: 10px;
+      left: 20px;
+      z-index: 1;
+    }
+
+    .dark-mode-toggle {
+      cursor: pointer;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .dark-mode-toggle:hover {
+      background-color: #45a049;
+    }
+    .update-log {
+      margin-top: 20px;
+      font-size: 16px;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: left;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+      
+     
+    }
+  </style>
+</head>
+
+<body>
+ <div class="toggle-container">
+    <button class="dark-mode-toggle" id="toggleDarkMode">Toggle Dark Mode</button>
+        <button class="button" id="clearInventory">Clear Inventory</button>
+        <button class="button" id="saveInventory">Save Inventory</button>
+        <button class="button" id="loadInventory">Load Inventory</button>
+    </div>
+</div>
+
+<div class="inventory">
+    <h2>Inventory</h2>
+    <input type="text" id="searchInventory" placeholder="Search Inventory..." />
+    <div id="inventoryList"></div>
+</div>
+
+  <div>
+    <h1>Choose and Open a Present!</h1>
+    <select id="presentSelect">
+      <!-- Present Options -->
+      <option value="uncommon">Uncommon Present</option>
+      <option value="rare">Rare Present</option>
+      <option value="epic">Epic Present</option>
+      <option value="mythic">Mythic Present</option>
+      <option value="secret">Secret Present</option>
+      <option value="nightmare">Nightmare Present</option>
+      <option value="forgotten">Forgotten Present</option>
+      <option value="apex">Apex Present</option>
+      <option value="withered">Withered Present</option>
+      <option value="phantom">Phantom Present</option>
+      <option value="nightmare_exclusive">Nightmare Exclusive Present</option>
+      <option value="funtime">Funtime Present</option>
+      <option value="rockstar">Rockstar Present</option>
+      <option value="glamrock">Glamrock Present</option>
+      <option value="ruin">Ruin Present</option>
+      <option value="season_presents">Season Exclusive Present</option>
+      <option value="summer">Summer Present</option>
+      <option value="military">Military Present</option>
+      <option value="western">Western Present</option>
+      <option value="halloween">Halloween Summons Present</option>
+      <option value="steampunk">Steampunk Summons Present</option>
+      <option value="christmas">Christmas Present</option>
+      <option value="christmas_summons">Christmas Summons Present</option>
+      <option value="greek">Greek Present</option>
+      <option value="space">Space Present</option>
+      <option value="music">Music Summons Present</option>
+      <option value="artist">Artist Present</option>
+      <option value="event">Event Present</option>
+      <option value="gaia">Gaia Present</option>
+      <option value="classical">Classical Present</option>
+      <option value="glitched">Glitched Present</option>
+      <option value="pirate">Pirate Present</option>
+      <option value="blighted">Blighted Present</option>
+      <option value="afk">AFK Presents</option>
+      <option value="endless1">Endless 1 Present</option>
+      <option value="titanic">Titanic Present</option>
+      <option value="corrupted">Corrupted Present</option>
+      <option value="pvp">PVP Present</option>
+      <option value="pandora">Pandora Present</option>
+      <option value="freddy">Freddy Present</option>
+      <option value="bonnie">Bonnie Present</option>
+      <option value="chica">Chica Present</option>
+      <option value="true_random">True Random Present</option>
+    </select>
+    <div>
+      <button class="button" onclick="openPresents(1)">Open 1 Present</button>
+      <button class="button" onclick="openPresents(8)">Open 8 Presents</button>
+      <button class="button" onclick="openPresents(25)">Open 25 Presents</button>
+      <button class="button" onclick="openPresents(50)">Open 50 Presents</button>
+    </div>
+    <div id="result"></div>
+    <div class="stats">
+      <p><span id="upgradeMessage"></span></p>
+    </div>
+    
+    <div>
+      <label><input type="checkbox" id="shinyHunter" /> Shiny Hunter (4% shiny chance)</label><br />
+      <label><input type="checkbox" id="luck1_5" /> 1.5x Luck (Increases low chance by 1.5x)</label><br />
+      <label><input type="checkbox" id="luck2x" /> 2x Luck (Increases low chance by 2x)</label><br />
+      <label><input type="checkbox" id="luck3x" /> 3x Luck (Increases low chance by 3x)</label>
+    </div>
+  </div>
+ 
+  <div>
+    <button class="button" onclick="window.open('https://discord.gg/2XDgPBeTxH', '_blank')">Join our Discord Server</button>
+  </div>
+
+ 
+  <div class="update-log">
+    <h2>Update Log</h2>
+    <ul>
+      <li>Added Music Summons present</li>
+      <li>Added Artist  present</li>
+      <li>Added all music event units: jazztrap, old man composer, rnb chica, rap god chica, soultown fredbear, dubstep moondrop, theater foxy, super fan freddy, rock n roll bonnie, classical ballora, lofi plushtrap, disco endo, the band,popstar music man,  and phonk spring bonnie</li>
+      <li>**The first person who shows proof of getting shiny Dark Frostbear from the Christmas summon present or Popstar Music Man from the Music Summon present WITHOUT luck boosts or Shiny Hunter will be added to the game**</li>
+    </ul>
+  </div>
+  
+  <div class="inventory">
+    <h2>Inventory</h2>
+    <input type="text" id="searchInventory" placeholder="Search Inventory..." />
+    <div id="inventoryList"></div>
+  </div>
+  <script>
+    
+    const toggleDarkModeButton = document.getElementById('toggleDarkMode');
+    toggleDarkModeButton.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+    });
+
+   
+    const unitRarity = {
+       // Uncommon (Green)
+      "Baker Chica": "uncommon",
+      "Reinforced Freddy": "uncommon",
+      "Chica": "uncommon",
+      "Freddy": "uncommon",
+      // Rare (Blue)
+      "Elite Sniper Cupcake": "rare",
+      "Enraged Toy Freddy": "rare",
+      "Cutlass Foxy": "rare",
+      "Glamrock Freddy": "rare",
+      "Brawler Foxy": "rare",
+      "Rockstar Freddy": "rare",
+      "Jack O Chica": "rare",
+      "Funtime Foxy": "rare",
+      "Cowboy Freddy": "rare",
+      "Nightmare Freddy": "rare",
+      "Major Freddy": "rare",
+      "Sniper Cupcake": "rare",
+      "Phantom Foxy": "rare",
+      "Summer Toy Bonnie": "rare",
+      "Withered Chica": "rare",
+      "Foxy": "rare",
+      "Toy Freddy": "rare",
+      // Epic (Purple)
+      "Cool Toy Bonnie": "epic",
+      "Demolition Toy Chica": "epic",
+      "Raider Freddy": "epic",
+      "Nightmare Bot": "epic",
+      "Archer Fredeus": "epic",
+      "Glamrock Chica": "epic",
+      "Present Boy": "epic",
+      "Mechanical Freddy": "epic",
+      "Number 1 Crate": "epic",
+      "Rockstar Chica": "epic",
+      "Augmented Endo": "epic",
+      "Dino Withered Chica": "epic",
+      "Pumpkin Balloon Boy": "epic",
+      "Bonnet": "epic",
+      "Funtime Freddy": "epic",
+      "Maestro Puppet": "epic",
+      "Hooligan Toy Bonnie": "epic",
+      "Party Chica": "epic",
+      "Buccaneer Foxy": "epic",
+      "Nightmare Chica": "epic",
+      "Nightmare Cupcake": "epic",
+      "Glitched Cupcake": "epic",
+      "Artillery Puppet": "epic",
+      "Amalgam": "epic",
+      "Endo 03": "epic",
+      "FazCade": "epic",
+      "Hawaii Endo 02": "epic",
+      "Baker Toy Chica": "epic",
+      "Toy Chica": "epic",
+      "Toy Bonnie": "epic",
+      "Withered Foxy": "epic",
+      "Rock N' Roll Bonnie": "epic",
+      // Mythic (Yellow; using darkgoldenrod for readability)
+      "Upgraded Bonnie": "mythic",
+      "Haunted Golden Freddy": "mythic",
+      "Cosplushtrap": "mythic",
+      "Eclipse": "mythic",
+      "Hermes Puppeteer": "mythic",
+      "Roxanne Wolf": "mythic",
+      "Nutcracker Chica": "mythic",
+      "Windup Bonnie": "mythic",
+      "Rockstar Bonnie": "mythic",
+      "Jack O Bonnie": "mythic",
+      "Ballora": "mythic",
+      "Tavern Chica": "mythic",
+      "Nightmare Foxy": "mythic",
+      "Nightmare Balloon Boy": "mythic",
+      "Mercenary Foxy": "mythic",
+      "Phantom Golden Freddy": "mythic",
+      "Coco Boy": "mythic",
+      "Balloon Boy": "mythic",
+      "Bonnie": "mythic",
+      "Golden Freddy": "mythic",
+      "Withered Freddy": "mythic",
+      "Vendor Toy Chica": "mythic",
+      "Super Fan Freddy": "mythic",
+      // Secret (Red)
+      "President Freddy": "secret",
+      "Ghastly Phantom Freddy": "secret",
+      "Sharpshooter Puppet": "secret",
+      "Animdude": "secret",
+      "Bomber Boy": "secret",
+      "Fortified Endo 02": "secret",
+      "Fractured Bonnie": "secret",
+      "Spectral Chica": "secret",
+      "Wraith Freddy": "secret",
+      "Tuned Mangle": "secret",
+      "Alien Helpy": "secret",
+      "The Mimic": "secret",
+      "Great Escape Freddy": "secret",
+      "The Princess": "secret",
+      "Fan": "secret",
+      "Ruined Glamrock Bonnie": "secret",
+      "Forest Nymph Bonnie": "secret",
+      "Zeus Fredeus": "secret",
+      "Foxseidon": "secret",
+      "Glamrock Endo": "secret",
+      "Sunshine": "secret",
+      "Wet Floor Bot": "secret",
+      "Montgomery Gator": "secret",
+      "Frost Plushtrap": "secret",
+      "Freddy Frostbear": "secret",
+      "Reindeer Withered Bonnie": "secret",
+      "Gladiator Foxy": "secret",
+      "Tarnished Fredbear": "secret",
+      "Duelist Puppet": "secret",
+      "Mechanic Afton": "secret",
+      "Steampunk Mangle": "secret",
+      "Geared Endo": "secret",
+      "Mr Can Do": "secret",
+      "Bucket Bob": "secret",
+      "Scrap Baby": "secret",
+      "Molten Freddy": "secret",
+      "Security Puppet": "secret",
+      "Rockstar Foxy": "secret",
+      "Nightguard Afton": "secret",
+      "Super Freddy": "secret",
+      "Grimm Foxy": "secret",
+      "Clowntrap": "secret",
+      "Jack O Cannon": "secret",
+      "Jack O Endo": "secret",
+      "Fazbear Mafia": "secret",
+      "Boombox Foxy": "secret",
+      "Elizabeth": "secret",
+      "Tangle": "secret",
+      "Lolbit": "secret",
+      "Mendo": "secret",
+      "Circus Baby": "secret",
+      "Reactor Freddy": "secret",
+      "Phone Guy": "secret",
+      "Blindeye Foxy": "secret",
+      "Gunslinger Endo": "secret",
+      "Bounty Mangle": "secret",
+      "Jackpot Freddy": "secret",
+      "Slick Bonnie": "secret",
+      "Purple Guy": "secret",
+      "Hydra Mangle": "secret",
+      "Plushtrap": "secret",
+      "Rave Demon Bonnie": "secret",
+      "Flame Empress Chica": "secret",
+      "Nightmare Bonnie": "secret",
+      "Nightmare Fredbear": "secret",
+      "Freddle": "secret",
+      "Fredbear": "secret",
+      "Nightmare": "secret",
+      "Endo 04": "secret",
+      "Scott": "secret",
+      "The Crying Child": "secret",
+      "Tarnished Spring Bonnie": "secret",
+      "Commando Endo": "secret",
+      "Rocketeer Mangle": "secret",
+      "Cupcake Tank": "secret",
+      "Enforcer Bonnie": "secret",
+      "Abyssal Foxy": "secret",
+      "Witch Toy Chica": "secret",
+      "Sentinel Bonnie": "secret",
+      "War Machine Foxy": "secret",
+      "Phantom Balloon Boy": "secret",
+      "Phantom Puppet": "secret",
+      "Phantom Chica": "secret",
+      "Phantom Cupcake": "secret",
+      "Phantom Freddy": "secret",
+      "Spring Bonnie": "secret",
+      "Patriot Freddy": "secret",
+      "Algae Fredbear": "secret",
+      "Rad Freddy": "secret",
+      "Seven Seas Foxy": "secret",
+      "Withered Golden Freddy": "secret",
+      "Pirate Withered Foxy": "secret",
+      "Puppet": "secret",
+      "Mangle": "secret",
+      "Shadow Freddy": "secret",
+      "Rockin Bonnie": "secret",
+      "Endo": "secret",
+      "Endo 02": "secret",
+      "Withered Bonnie": "secret",
+      "Plane Boy": "secret",
+      "Jazztrap": "secret",
+      "Theater Foxy": "secret",
+      "Disco Endo": "secret",
+      "LoFi Plushtrap": "secret",
+      // Nightmare (Dark Purple)
+      "Overseer Foxy": "nightmare",
+      "Deadeye Freddy": "nightmare",
+      "Overclocked Puppeteer": "nightmare",
+      "Valkyrie Prime": "nightmare",
+      "RWQFSFASXC": "nightmare",
+      "Nautic Crusher Mangle": "nightmare",
+      "Agonized Springtrap": "nightmare",
+      "Limitless Shadow": "nightmare",
+      "Master Puppeteer": "nightmare",
+      "Spring Trooper": "nightmare",
+      "Overseer Lolbit": "nightmare",
+      "Android Mangle": "nightmare",
+      "Dread Pirate Foxy": "nightmare",
+      "Sorcerer Ennard": "nightmare",
+      "Vanny": "nightmare",
+      "Candy Cadet": "nightmare",
+      "Flaming Springtrap": "nightmare",
+      "8-Bit OMC": "nightmare",
+      "Burntrap": "nightmare",
+      "Soulmate Puppet": "nightmare",
+      "Glamrock Bonnie": "nightmare",
+      "Forge Withered Bonnie": "nightmare",
+      "Ares Endoxus": "nightmare",
+      "Kingtrap": "nightmare",
+      "Blighted Foxy": "nightmare",
+      "Shadow of Afton": "nightmare",
+      "Stardrop": "nightmare",
+      "Exotic Butters": "nightmare",
+      "Moondrop": "nightmare",
+      "DJ Music Man": "nightmare",
+      "Lefty": "nightmare",
+      "Winter Soldier Bonnie": "nightmare",
+      "Bouncer": "nightmare",
+      "Overlord Scott": "nightmare",
+      "Icetrap": "nightmare",
+      "Jolly Shadow Bonnie": "nightmare",
+      "Frost Queen Ballora": "nightmare",
+      "Jar of Pickles": "nightmare",
+      "The King": "nightmare",
+      "Stonetrap": "nightmare",
+      "Diver Endo": "nightmare",
+      "Widow Baby": "nightmare",
+      "Popstar Chica": "nightmare",
+      "Scraptrap": "nightmare",
+      "Helpy": "nightmare",
+      "Ennard": "nightmare",
+      "Juggernaut Bonnie": "nightmare",
+      "Blighted Endo Bonnie": "nightmare",
+      "Scarecrow Foxy": "nightmare",
+      "Dreadbear": "nightmare",
+      "Eclipse Ballora": "nightmare",
+      "Endo 05": "nightmare",
+      "ITS ME": "nightmare",
+      "Nightmarionne": "nightmare",
+      "Outlaw Freddy": "nightmare",
+      "Goliath Endo Freddy": "nightmare",
+      "Galleon Foxy": "nightmare",
+      "Springtrap": "nightmare",
+      "Music Man": "nightmare",
+      "Nightmare Mangle": "nightmare",
+      "Circuit Breaker Freddy": "nightmare",
+      "Glitched Puppeteer": "nightmare",
+      "Valkyrie Chica": "nightmare",
+      "Bounded Shadow": "nightmare",
+      "Phantom Mangle": "nightmare",
+      "Shadow Bonnie": "nightmare",
+      "Leviathan Mangle": "nightmare",
+      "Marionette's Puppeteer": "nightmare",
+      "Blighted Endo Freddy": "nightmare",
+      "Soultown Fredbear": "nightmare",
+      "Dubstep Moondrop": "nightmare",
+      "Classical Ballora": "nightmare",
+      "The Band": "nightmare",
+      "Phonk Spring Bonnie": "nightmare",
+      // Forgotten (Cyan)
+      "Gaia Chica": "forgotten",
+      "Coffee": "forgotten",
+      "Dark Frostbear": "forgotten",
+      "Popstar Music Man": "forgotten",
+      // Apex (Pink)
+      "Frostbite Freddy": "apex",
+      "Apollo's Moon": "apex",
+      "Planet Buster Scott": "apex",
+      "Queen of Hearts Ballora": "apex",
+      "Apollo's Sun": "apex",
+      "Titan Crusher Freddy": "apex",
+      "Gilded Knight": "apex",
+      "Old Man Krampus": "apex",
+      "Black Ice Freddy": "apex",
+      "Dark Knight Puppet": "apex",
+      "Kronos Endo Freddy": "apex",
+      "Gravelord Foxy": "apex",
+      "Old Man Consequences": "apex",
+      "Astral Bonnie": "apex",
+      "RNB Chica": "apex",
+      "Rap God Chica": "apex",
+      "Old Man Composer": "apex"
+      
+    };
+
+    const rarityColors = {
+      uncommon: "green",
+      rare: "blue",
+      epic: "purple",
+      mythic: "darkgoldenrod",
+      secret: "red",
+      nightmare: "#4B0082",
+      apex: "hotpink",
+      forgotten: "cyan"
+    };
+
+    const presents = {
+            "uncommon": {
+        "Baker Chica": 1,
+        "Reinforced Freddy": 1,
+        "Chica": 1,
+        "Freddy": 1
+      },
+      "rare": {
+        "Elite Sniper Cupcake": 1,
+        "Enraged Toy Freddy": 1,
+        "Cutlass Foxy": 1,
+        "Glamrock Freddy": 1,
+        "Brawler Foxy": 1,
+        "Rockstar Freddy": 1,
+        "Jack O Chica": 1,
+        "Funtime Foxy": 1,
+        "Cowboy Freddy": 1,
+        "Nightmare Freddy": 1,
+        "Major Freddy": 1,
+        "Sniper Cupcake": 1,
+        "Phantom Foxy": 1,
+        "Summer Toy Bonnie": 1,
+        "Withered Chica": 1,
+        "Foxy": 1,
+        "Toy Freddy": 1
+      },
+      "epic": {
+        "Cool Toy Bonnie": 1,
+        "Demolition Toy Chica": 1,
+        "Raider Freddy": 1,
+        "Nightmare Bot": 1,
+        "Archer Fredeus": 1,
+        "Glamrock Chica": 1,
+        "Present Boy": 1,
+        "Mechanical Freddy": 1,
+        "Number 1 Crate": 1,
+        "Rockstar Chica": 1,
+        "Augmented Endo": 1,
+        "Dino Withered Chica": 1,
+        "Pumpkin Balloon Boy": 1,
+        "Bonnet": 1,
+        "Funtime Freddy": 1,
+        "Maestro Puppet": 1,
+        "Hooligan Toy Bonnie": 1,
+        "Party Chica": 1,
+        "Buccaneer Foxy": 1,
+        "Nightmare Chica": 1,
+        "Nightmare Cupcake": 1,
+        "Glitched Cupcake": 1,
+        "Artillery Puppet": 1,
+        "Amalgam": 1,
+        "Endo 03": 1,
+        "FazCade": 1,
+        "Hawaii Endo 02": 1,
+        "Baker Toy Chica": 1,
+        "Toy Chica": 1,
+        "Toy Bonnie": 1,
+        "Rock N' Roll Bonnie": 1,
+        "Withered Foxy": 1
+      },
+      "mythic": {
+        "Upgraded Bonnie": 1,
+        "Haunted Golden Freddy": 1,
+        "Cosplushtrap": 1,
+        "Eclipse": 1,
+        "Hermes Puppeteer": 1,
+        "Roxanne Wolf": 1,
+        "Nutcracker Chica": 1,
+        "Windup Bonnie": 1,
+        "Rockstar Bonnie": 1,
+        "Jack O Bonnie": 1,
+        "Ballora": 1,
+        "Tavern Chica": 1,
+        "Nightmare Foxy": 1,
+        "Nightmare Balloon Boy": 1,
+        "Mercenary Foxy": 1,
+        "Phantom Golden Freddy": 1,
+        "Coco Boy": 1,
+        "Balloon Boy": 1,
+        "Bonnie": 1,
+        "Golden Freddy": 1,
+        "Withered Freddy": 1,
+        "Super Fan Freddy": 1,
+        "Vendor Toy Chica": 1
+      },
+      "secret": {
+        "President Freddy": 1,
+        "Ghastly Phantom Freddy": 1,
+        "Sharpshooter Puppet": 1,
+        "Animdude": 1,
+        "Bomber Boy": 1,
+        "Fortified Endo 02": 1,
+        "Fractured Bonnie": 1,
+        "Spectral Chica": 1,
+        "Wraith Freddy": 1,
+        "Tuned Mangle": 1,
+        "Alien Helpy": 1,
+        "The Mimic": 1,
+        "Great Escape Freddy": 1,
+        "The Princess": 1,
+        "Fan": 1,
+        "Ruined Glamrock Bonnie": 1,
+        "Forest Nymph Bonnie": 1,
+        "Zeus Fredeus": 1,
+        "Foxseidon": 1,
+        "Glamrock Endo": 1,
+        "Sunshine": 1,
+        "Wet Floor Bot": 1,
+        "Montgomery Gator": 1,
+        "Frost Plushtrap": 1,
+        "Freddy Frostbear": 1,
+        "Reindeer Withered Bonnie": 1,
+        "Gladiator Foxy": 1,
+        "Tarnished Fredbear": 1,
+        "Duelist Puppet": 1,
+        "Mechanic Afton": 1,
+        "Steampunk Mangle": 1,
+        "Geared Endo": 1,
+        "Mr Can Do": 1,
+        "Bucket Bob": 1,
+        "Scrap Baby": 1,
+        "Molten Freddy": 1,
+        "Security Puppet": 1,
+        "Rockstar Foxy": 1,
+        "Nightguard Afton": 1,
+        "Super Freddy": 1,
+        "Grimm Foxy": 1,
+        "Clowntrap": 1,
+        "Jack O Cannon": 1,
+        "Jack O Endo": 1,
+        "Fazbear Mafia": 1,
+        "Boombox Foxy": 1,
+        "Elizabeth": 1,
+        "Tangle": 1,
+        "Lolbit": 1,
+        "Mendo": 1,
+        "Circus Baby": 1,
+        "Reactor Freddy": 1,
+        "Phone Guy": 1,
+        "Blindeye Foxy": 1,
+        "Gunslinger Endo": 1,
+        "Bounty Mangle": 1,
+        "Jackpot Freddy": 1,
+        "Slick Bonnie": 1,
+        "Purple Guy": 1,
+        "Hydra Mangle": 1,
+        "Plushtrap": 1,
+        "Rave Demon Bonnie": 1,
+        "Flame Empress Chica": 1,
+        "Nightmare Bonnie": 1,
+        "Nightmare Fredbear": 1,
+        "Freddle": 1,
+        "Fredbear": 1,
+        "Nightmare": 1,
+        "Endo 04": 1,
+        "Scott": 1,
+        "The Crying Child": 1,
+        "Tarnished Spring Bonnie": 1,
+        "Commando Endo": 1,
+        "Rocketeer Mangle": 1,
+        "Cupcake Tank": 1,
+        "Enforcer Bonnie": 1,
+        "Abyssal Foxy": 1,
+        "Witch Toy Chica": 1,
+        "Sentinel Bonnie": 1,
+        "War Machine Foxy": 1,
+        "Phantom Balloon Boy": 1,
+        "Phantom Puppet": 1,
+        "Phantom Chica": 1,
+        "Phantom Cupcake": 1,
+        "Phantom Freddy": 1,
+        "Spring Bonnie": 1,
+        "Patriot Freddy": 1,
+        "Algae Fredbear": 1,
+        "Rad Freddy": 1,
+        "Seven Seas Foxy": 1,
+        "Withered Golden Freddy": 1,
+        "Pirate Withered Foxy": 1,
+        "Puppet": 1,
+        "Mangle": 1,
+        "Shadow Freddy": 1,
+        "Rockin Bonnie": 1,
+        "Endo": 1,
+        "Endo 02": 1,
+        "Withered Bonnie": 1,
+        "Theater Foxy": 1,
+        "Disco Endo": 1,
+        "Jazztrap": 1,
+        "LoFi Plushtrap": 1,
+        "Plane Boy": 1
+      },
+      "nightmare": {
+        "Overseer Foxy": 1,
+        "Deadeye Freddy": 1,
+        "Overclocked Puppeteer": 1,
+        "Valkyrie Prime": 1,
+        "RWQFSFASXC": 1,
+        "Nautic Crusher Mangle": 1,
+        "Agonized Springtrap": 1,
+        "Limitless Shadow": 1,
+        "Master Puppeteer": 1,
+        "Spring Trooper": 1,
+        "Overseer Lolbit": 1,
+        "Android Mangle": 1,
+        "Dread Pirate Foxy": 1,
+        "Sorcerer Ennard": 1,
+        "Vanny": 1,
+        "Candy Cadet": 1,
+        "Flaming Springtrap": 1,
+        "8-Bit OMC": 1,
+        "Burntrap": 1,
+        "Soulmate Puppet": 1,
+        "Glamrock Bonnie": 1,
+        "Forge Withered Bonnie": 1,
+        "Ares Endoxus": 1,
+        "Kingtrap": 1,
+        "Blighted Foxy": 1,
+        "Shadow of Afton": 1,
+        "Stardrop": 1,
+        "Exotic Butters": 1,
+        "Moondrop": 1,
+        "DJ Music Man": 1,
+        "Lefty": 1,
+        "Winter Soldier Bonnie": 1,
+        "Bouncer": 1,
+        "Overlord Scott": 1,
+        "Icetrap": 1,
+        "Jolly Shadow Bonnie": 1,
+        "Frost Queen Ballora": 1,
+        "Jar of Pickles": 1,
+        "The King": 1,
+        "Stonetrap": 1,
+        "Diver Endo": 1,
+        "Widow Baby": 1,
+        "Popstar Chica": 1,
+        "Scraptrap": 1,
+        "Helpy": 1,
+        "Ennard": 1,
+        "Juggernaut Bonnie": 1,
+        "Blighted Endo Bonnie": 1,
+        "Scarecrow Foxy": 1,
+        "Dreadbear": 1,
+        "Eclipse Ballora": 1,
+        "Endo 05": 1,
+        "ITS ME": 1,
+        "Nightmarionne": 1,
+        "Outlaw Freddy": 1,
+        "Goliath Endo Freddy": 1,
+        "Galleon Foxy": 1,
+        "Springtrap": 1,
+        "Music Man": 1,
+        "Nightmare Mangle": 1,
+        "Circuit Breaker Freddy": 1,
+        "Glitched Puppeteer": 1,
+        "Valkyrie Chica": 1,
+        "Bounded Shadow": 1,
+        "Phantom Mangle": 1,
+        "Shadow Bonnie": 1,
+        "Leviathan Mangle": 1,
+        "Marionette's Puppeteer": 1,
+        "Soultown Fredbear": 1,
+        "Dubstep Moondrop": 1,
+        "Classical Ballora": 1,
+        "Phonk Spring Bonnie": 1,
+        "The Band": 1,
+        "Blighted Endo Freddy": 1
+      },
+      "forgotten": {
+        "Gaia Chica": 1,
+        "Coffee": 1,
+        "Dark Frostbear": 1
+      },
+      "apex": {
+        "Frostbite Freddy": 1,
+        "Apollo's Moon": 1,
+        "Planet Buster Scott": 1,
+        "Queen of Hearts Ballora": 1,
+        "Apollo's Sun": 1,
+        "Titan Crusher Freddy": 1,
+        "Gilded Knight": 1,
+        "Old Man Krampus": 1,
+        "Black Ice Freddy": 1,
+        "Dark Knight Puppet": 1,
+        "Kronos Endo Freddy": 1,
+        "Gravelord Foxy": 1,
+        "Old Man Consequences": 1,
+        "Astral Bonnie": 1
+      },
+      "withered": {
+        "Withered Chica": 60,
+        "Withered Foxy": 35,
+        "Withered Freddy": 5,
+        "Withered Bonnie": 0.5,
+        "Shadow Bonnie": 0.25
+      },
+      "phantom": {
+        "Phantom Foxy": 60,
+        "Amalgam": 35,
+        "Phantom Golden Freddy": 5,
+        "Phantom Balloon Boy": 0.25,
+        "Springtrap": 0.1
+      },
+      "nightmare_exclusive": {
+        "Nightmare Freddy": 60,
+        "Nightmare Chica": 35,
+        "Nightmare Foxy": 5,
+        "Nightmare Bonnie": 0.25,
+        "Nightmarionne": 0.1
+      },
+      "funtime": {
+        "Funtime Foxy": 60,
+        "Funtime Freddy": 35,
+        "Ballora": 5,
+        "Circus Baby": 0.25,
+        "Ennard": 0.1
+      },
+      "rockstar": {
+        "Rockstar Freddy": 60,
+        "Rockstar Chica": 35,
+        "Rockstar Bonnie": 5,
+        "Rockstar Foxy": 0.25,
+        "Lefty": 0.1
+      },
+      "glamrock": {
+        "Glamrock Freddy": 60,
+        "Glamrock Chica": 35,
+        "Roxanne Wolf": 5,
+        "Montgomery Gator": 0.1,
+        "Burntrap": 0.05
+      },
+      "ruin": {
+        "Nightmare Bot": 80,
+        "Eclipse": 20,
+        "The Mimic": 0.01,
+        "M.X.E.S": 0.005
+      },
+      "season_presents": {
+       "Withered Chica": 60,
+        "Withered Foxy": 35,
+        "Withered Freddy": 5,
+        "Withered Bonnie": 0.5,
+        "Shadow Bonnie": 0.25,
+        "Phantom Foxy": 60,
+        "Amalgam": 35,
+        "Phantom Golden Freddy": 5,
+        "Phantom Balloon Boy": 0.25,
+        "Springtrap": 0.1,
+        "Nightmare Freddy": 60,
+        "Nightmare Chica": 35,
+        "Nightmare Foxy": 5,
+        "Nightmare Bonnie": 0.25,
+        "Nightmarionne": 0.1,
+        "Funtime Foxy": 60,
+        "Funtime Freddy": 35,
+        "Ballora": 5,
+        "Circus Baby": 0.25,
+        "Ennard": 0.1,
+        "Rockstar Freddy": 60,
+        "Rockstar Chica": 35,
+        "Rockstar Bonnie": 5,
+        "Rockstar Foxy": 0.25,
+        "Lefty": 0.1,
+        "Glamrock Freddy": 60,
+        "Glamrock Chica": 35,
+        "Roxanne Wolf": 5,
+        "Montgomery Gator": 0.1,
+        "Burntrap": 0.05,
+        "Nightmare Bot": 80,
+        "Eclipse": 20,
+        "The Mimic": 0.01,
+        "M.X.E.S": 0.005
+      },
+      "summer": {
+        "Summer Toy Bonnie": 60,
+        "Hawaii Endo 02": 35,
+        "Coco Boy": 5,
+        "Seven Seas Foxy": 0.25,
+        "Leviathan Mangle": 0.05
+      },
+      "military": {
+        "Major Freddy": 60,
+        "Artillery Puppet": 35,
+        "Mercenary Foxy": 5,
+        "Enforcer Bonnie": 0.25,
+        "Valkyrie Chica": 0.05
+      },
+      "western": {
+        "Cowboy Freddy": 60,
+        "Maestro Puppet": 35,
+        "Tavern Chica": 5,
+        "Blindeye Foxy": 0.25,
+        "Outlaw Freddy": 0.05
+      },
+      "halloween": {
+        "Jack O Chica": 50,
+        "Pumpkin Balloon Boy": 30,
+        "Jack O Bonnie": 20,
+        "Jack O Endo": 0.25,
+        "Dreadbear": 0.05,
+        "Gravelord Foxy": 0.005
+      },
+      "steampunk": {
+        "Brawler Foxy": 60,
+        "Mechanical Freddy": 35,
+        "Windup Bonnie": 5,
+        "Geared Endo": 0.25,
+        "Widow Baby": 0.01,
+        "Kronos Endo Freddy": 0.001
+      },
+      "christmas": {
+        "Frost Plushtrap": 90,
+        "Winter Soldier Bonnie": 10,
+        "Old Man Krampus": 0.5
+      },
+      "christmas_summons": {
+        "Present Boy": 70,
+        "Nutcracker Chica": 30,
+        "Reindeer Withered Bonnie": 0.25,
+        "Jolly Shadow Bonnie": 0.01,
+        "Black Ice Freddy": 0.005,
+        "Dark Frostbear": 0.0001
+      },
+      "greek": {
+        "Archer Fredeus": 45,
+        "Hermes Puppeteer": 60,
+        "Foxseidon": 4,
+        "Ares Endoxus": 1,
+        "Apollo's Sun": 0.1,
+        "Gaia Chica": 0.01
+      },
+      "space": {
+        "Raider Freddy": 60,
+        "Cosplushtrap": 40,
+        "Android Mangle": 1,
+        "Planet Buster Scott": 0.1
+      },
+      "music": {
+        "Rock N' Roll Bonnie": 70,
+        "Super Fan Freddy": 30,
+        "Theater Foxy": 0.25,
+        "Soultown Fredbear": 0.01,
+        "RNB Chica": 0.005,
+        "Popstar Music Man": 0.0001
+      },
+      "artist":{
+        "LoFi Plushtrap": 90,
+        "Phonk Spring Bonnie": 10,
+        "Old Man Composer": 0.5
+      },
+      "event": {
+        "Summer Toy Bonnie": 60,
+        "Hawaii Endo 02": 35,
+        "Coco Boy": 5,
+        "Seven Seas Foxy": 0.25,
+        "Leviathan Mangle": 0.05,
+         "Major Freddy": 60,
+        "Artillery Puppet": 35,
+        "Mercenary Foxy": 5,
+        "Enforcer Bonnie": 0.25,
+        "Valkyrie Chica": 0.05,
+         "Cowboy Freddy": 60,
+        "Maestro Puppet": 35,
+        "Tavern Chica": 5,
+        "Blindeye Foxy": 0.25,
+        "Outlaw Freddy": 0.05,
+        "Jack O Chica": 50,
+        "Pumpkin Balloon Boy": 30,
+        "Jack O Bonnie": 20,
+        "Jack O Endo": 0.25,
+        "Dreadbear": 0.05,
+        "Gravelord Foxy": 0.005,
+        "Brawler Foxy": 60,
+        "Mechanical Freddy": 35,
+        "Windup Bonnie": 5,
+        "Geared Endo": 0.25,
+        "Widow Baby": 0.01,
+        "Kronos Endo Freddy": 0.001,
+         "Frost Plushtrap": 90,
+        "Winter Soldier Bonnie": 10,
+        "Old Man Krampus": 0.5,
+        "Present Boy": 70,
+        "Nutcracker Chica": 30,
+        "Reindeer Withered Bonnie": 0.25,
+        "Jolly Shadow Bonnie": 0.01,
+        "Black Ice Freddy": 0.005,
+        "Dark Frostbear": 0.0001,
+        "Archer Fredeus": 45,
+        "Hermes Puppeteer": 60,
+        "Foxseidon": 4,
+        "Ares Endoxus": 1,
+        "Apollo's Sun": 0.1,
+        "Gaia Chica": 0.01,
+        "Raider Freddy": 60,
+        "Cosplushtrap": 40,
+        "Android Mangle": 1,
+        "Planet Buster Scott": 0.1,
+        "Rock N' Roll Bonnie": 70,
+        "Super Fan Freddy": 30,
+        "Theater Foxy": 0.25,
+        "Soultown Fredbear": 0.01,
+        "RNB Chica": 0.005,
+        "Popstar Music Man": 0.0001,
+        "LoFi Plushtrap": 90,
+        "Phonk Spring Bonnie": 10,
+        "Old Man Composer": 0.5
+      },
+      "gaia": {
+        "Forest Nymph Bonnie": 99.5,
+        "Gaia Chica": 0.5
+      },
+      "classical": {
+        "Classical Ballora": 99.5,
+        "Popstar Music Man": 0.5
+      },
+      "glitched": {
+        "Glitched Cupcake": 99.9,
+        "Glitched Puppeteer": 0.1
+      },
+      "pirate": {
+        "Buccaneer Foxy": 99.9,
+        "Galleon Foxy": 0.1
+      },
+      "blighted": {
+        "Glitched Cupcake": 99.9,
+        "Blighted Endo Bonnie": 0.1,
+        "Coffee": 0.01
+      },
+      "afk": {
+        "Glitched Cupcake": 99.9,
+        "Glitched Puppeteer": 0.1,
+        "Buccaneer Foxy": 99.9,
+        "Galleon Foxy": 0.1,
+        "Dino Withered Chica": 99.9,
+        "Blighted Endo Bonnie": 0.1,
+        "Coffee": 0.01
+      },
+      "endless1": {
+        "Party Chica": 99.9,
+        "Goliath Endo Freddy": 0.1
+      },
+      "titanic": {
+        "Augmented Endo": 99.9,
+        "Juggernaut Bonnie": 0.1,
+        "Goliath Endo Freddy": 0.1
+      },
+      "corrupted": {
+        "ITS ME": 99.5,
+        "Old Man Consequences": 0.5
+      },
+      "pvp": {
+        "Gladiator Foxy": 99.9,
+        "Dark Knight Puppet": 0.1
+      },
+      "pandora": {
+        "Freddy": 50,
+        "Chica": 50,
+        "Foxy": 30,
+        "Toy Freddy": 30,
+        "Sniper Cupcake": 30,
+        "Toy Chica": 15,
+        "Toy Bonnie": 15,
+        "FazCade": 15,
+        "Augmented Endo": 15,
+        "Party Chica": 15,
+        "Glitched Cupcake": 15,
+        "Bonnie": 7,
+        "Balloon Boy": 7,
+        "Golden Freddy": 7,
+        "Nightmare Balloon Boy": 7,
+        "Mangle": 1,
+        "Shadow Freddy": 1,
+        "Phantom Chica": 1,
+        "Gladiator Foxy": 1,
+        "Marionette's Puppeteer": 0.2,
+        "Bounded Shadow": 0.2,
+        "ITS ME": 0.2,
+        "Juggernaut Bonnie": 0.2,
+        "Goliath Endo Freddy": 0.2,
+        "Blighted Endo Bonnie": 0.2,
+        "Astral Bonnie": 0.05,
+        "Old Man Consequences": 0.05,
+        "Dark Knight Puppet": 0.05,
+        "Coffee": 0.001
+      },
+      
+      "freddy": {
+        "Freddy": 50,
+        "Reinforced Freddy": 50,
+        "Enraged Toy Freddy": 30,
+        "Glamrock Freddy": 30,
+        "Rockstar Freddy": 30,
+        "Cowboy Freddy": 30,
+        "Nightmare Freddy": 30,
+        "Major Freddy": 30,
+        "Toy Freddy": 30,
+        "Raider Freddy": 15,
+        "Mechanical Freddy": 15,
+        "Funtime Freddy": 15,
+        "Archer Fredeus": 15,
+        "Haunted Golden Freddy": 7,
+        "Phantom Golden Freddy": 7,
+        "Golden Freddy": 7,
+        "Withered Freddy": 7,
+        "Super Fan Freddy": 7,
+        "President Freddy": 1,
+        "Ghastly Phantom Freddy": 1,
+        "Wraith Freddy": 1,
+        "Tarnished Fredbear": 1,
+        "Nightmare Fredbear": 1,
+        "Freddle": 1,
+        "Fredbear": 1,
+        "Nightmare": 1,
+        "Algae Fredbear": 1,
+        "Great Escape Freddy": 1,
+        "Freddy Frostbear": 1,
+        "Molten Freddy": 1,
+        "Super Freddy": 1,
+        "Reactor Freddy": 1,
+        "Jackpot Freddy": 1,
+        "Phantom Freddy": 1,
+        "Patriot Freddy": 1,
+        "Rad Freddy": 1,
+        "Zeus Fredeus": 1,
+        "Fazbear Mafia": 1,
+        "Alien Helpy": 1,
+        "Withered Golden Freddy": 1,
+        "Shadow Freddy": 1,
+        "Deadeye Freddy": 0.2,
+        "Outlaw Freddy": 0.2,
+        "Goliath Endo Freddy": 0.2,
+        "Dreadbear": 0.2,
+        "Helpy": 0.2,
+        "ITS ME": 0.2,
+        "Soultown Fredbear": 0.2,
+        "Circuit Breaker Freddy": 0.2,
+        "Blighted Freddy": 0.2,
+        "Frostbite Freddy": 0.05,
+        "Titan Crusher Freddy": 0.05,
+        "Black Ice Freddy": 0.05,
+        "Kronos Endo Freddy": 0.05,
+        "Dark Frostbear": 0.001
+      },
+      
+      "bonnie": {
+        "Summer Toy Bonnie": 30,
+        "Cool Toy Bonnie": 15,
+        "Hooligan Toy Bonnie": 15,
+        "Toy Bonnie": 15,
+        "Bonnet": 15,
+        "Rock N' Roll Bonnie": 15,
+        "Upgraded Bonnie": 7,
+        "Windup Bonnie": 7,
+        "Rockstar Bonnie": 7,
+        "Jack O Bonnie": 7,
+        "Bonnie": 7,
+        "Fractured Bonnie": 1,
+        "Ruined Glamrock Bonnie": 1,
+        "Forest Nymph Bonnie": 1,
+        "Reindeer Withered Bonnie": 1,
+        "Slick Bonnie": 1,
+        "Rave Demon Bonnie": 1,
+        "Nightmare Bonnie": 1,
+        "Tarnished Spring Bonnie": 1,
+        "Enforcer Bonnie": 1,
+        "Sentinel Bonnie": 1,
+        "Spring Bonnie": 1,
+        "Rockin Bonnie": 1,
+        "Withered Bonnie": 1,
+        "Glamrock Bonnie": 0.2,
+        "Forge Withered Bonnie": 0.2,
+        "Winter Soldier Bonnie": 0.2,
+        "Jolly Shadow Bonnie": 0.2,
+        "Juggernaut Bonnie": 0.2,
+        "Blighted Endo Bonnie": 0.2,
+        "Shadow Bonnie": 0.2,
+        "RWQFSFASXC": 0.2,
+        "Phonk Spring Bonnie": 0.2,
+        "Astral Bonnie": 0.05
+      },
+      
+      "chica": {
+      "Baker Chica": 50,
+      "Chica": 50,
+      "Jack O Chica": 30,
+      "Withered Chica": 30,
+      "Demolition Toy Chica": 15,
+      "Glamrock Chica": 15,
+      "Rockstar Chica": 15,
+      "Dino Withered Chica": 15,
+      "Party Chica": 15,
+      "Nightmare Chica": 15,
+      "Baker Toy Chica": 15,
+      "Toy Chica": 15,
+      "Nutcracker Chica": 7,
+      "Tavern Chica": 7,
+      "Vendor Toy Chica": 7,
+      "Spectral Chica": 1,
+      "Flame Empress Chica": 1,
+      "Witch Toy Chica": 1,
+      "Phantom Chica": 1,
+      "Popstar Chica": 0.2,
+      "Valkyrie Chica": 0.2,
+        "RNB Chica": 0.05,
+        "Rap God Chica": 0.05,
+      "Gaia Chica": 0.001
+      },
+      
+      "true_random": {
+        "Baker Chica": 50,
+        "Reinforced Freddy": 50,
+        "Chica": 50,
+        "Freddy": 50,
+        "Elite Sniper Cupcake": 30,
+        "Enraged Toy Freddy": 30,
+        "Cutlass Foxy": 30,
+        "Glamrock Freddy": 30,
+        "Brawler Foxy": 30,
+        "Rockstar Freddy": 30,
+        "Jack O Chica": 30,
+        "Funtime Foxy": 30,
+        "Cowboy Freddy": 30,
+        "Nightmare Freddy": 30,
+        "Major Freddy": 30,
+        "Sniper Cupcake": 30,
+        "Phantom Foxy": 30,
+        "Summer Toy Bonnie": 30,
+        "Withered Chica": 30,
+        "Foxy": 30,
+        "Toy Freddy": 30,
+        "Cool Toy Bonnie": 15,
+        "Demolition Toy Chica": 15,
+        "Raider Freddy": 15,
+        "Nightmare Bot": 1,
+        "Archer Fredeus": 15,
+        "Glamrock Chica": 15,
+        "Present Boy": 15,
+        "Mechanical Freddy": 15,
+        "Number 1 Crate": 15,
+        "Rockstar Chica": 15,
+        "Augmented Endo": 15,
+        "Dino Withered Chica": 15,
+        "Pumpkin Balloon Boy": 15,
+        "Bonnet": 15,
+        "Funtime Freddy": 15,
+        "Maestro Puppet": 15,
+        "Hooligan Toy Bonnie": 15,
+        "Party Chica": 15,
+        "Buccaneer Foxy": 15,
+        "Nightmare Chica": 15,
+        "Nightmare Cupcake": 15,
+        "Glitched Cupcake": 15,
+        "Artillery Puppet": 15,
+        "Rock N' Roll Bonnie": 15,
+        "Amalgam": 15,
+        "Endo 03": 15,
+        "FazCade": 15,
+        "Hawaii Endo 02": 15,
+        "Baker Toy Chica": 15,
+        "Toy Chica": 15,
+        "Toy Bonnie": 15,
+        "Withered Foxy": 15,
+        "Upgraded Bonnie": 7,
+        "Haunted Golden Freddy": 7,
+        "Cosplushtrap": 7,
+        "Eclipse": 7,
+        "Super Fan Freddy": 7,
+        "Hermes Puppeteer": 7,
+        "Roxanne Wolf": 7,
+        "Nutcracker Chica": 7,
+        "Windup Bonnie": 7,
+        "Rockstar Bonnie": 7,
+        "Jack O Bonnie": 7,
+        "Ballora": 7,
+        "Tavern Chica": 7,
+        "Nightmare Foxy": 7,
+        "Nightmare Balloon Boy": 7,
+        "Mercenary Foxy": 7,
+        "Phantom Golden Freddy": 7,
+        "Coco Boy": 7,
+        "Balloon Boy": 7,
+        "Bonnie": 7,
+        "Golden Freddy": 7,
+        "Withered Freddy": 7,
+        "Vendor Toy Chica": 7,
+        "President Freddy": 1,
+        "Ghastly Phantom Freddy": 1,
+        "Sharpshooter Puppet": 1,
+        "Animdude": 1,
+        "Bomber Boy": 1,
+        "Fortified Endo 02": 1,
+        "Fractured Bonnie": 1,
+        "Spectral Chica": 1,
+        "Wraith Freddy": 1,
+        "Tuned Mangle": 1,
+        "Alien Helpy": 1,
+        "The Mimic": 1,
+        "Great Escape Freddy": 1,
+        "The Princess": 1,
+        "Fan": 1,
+        "Ruined Glamrock Bonnie": 1,
+        "Forest Nymph Bonnie": 1,
+        "Zeus Fredeus": 1,
+        "Foxseidon": 1,
+        "Glamrock Endo": 1,
+        "Sunshine": 1,
+        "Wet Floor Bot": 1,
+        "Theater Foxy": 1,
+        "Disco Endo": 1,
+        "Jazztrap": 1,
+        "LoFi Plushtrap": 1,
+        "Montgomery Gator": 1,
+        "Frost Plushtrap": 1,
+        "Freddy Frostbear": 1,
+        "Reindeer Withered Bonnie": 1,
+        "Gladiator Foxy": 1,
+        "Tarnished Fredbear": 1,
+        "Duelist Puppet": 1,
+        "Mechanic Afton": 1,
+        "Steampunk Mangle": 1,
+        "Geared Endo": 1,
+        "Mr Can Do": 1,
+        "Bucket Bob": 1,
+        "Scrap Baby": 1,
+        "Molten Freddy": 1,
+        "Security Puppet": 1,
+        "Rockstar Foxy": 1,
+        "Nightguard Afton": 1,
+        "Super Freddy": 1,
+        "Grimm Foxy": 1,
+        "Clowntrap": 1,
+        "Jack O Cannon": 1,
+        "Jack O Endo": 1,
+        "Fazbear Mafia": 1,
+        "Boombox Foxy": 1,
+        "Elizabeth": 1,
+        "Tangle": 1,
+        "Lolbit": 1,
+        "Mendo": 1,
+        "Circus Baby": 1,
+        "Reactor Freddy": 1,
+        "Phone Guy": 1,
+        "Blindeye Foxy": 1,
+        "Gunslinger Endo": 1,
+        "Bounty Mangle": 1,
+        "Jackpot Freddy": 1,
+        "Slick Bonnie": 1,
+        "Purple Guy": 1,
+        "Hydra Mangle": 1,
+        "Plushtrap": 1,
+        "Rave Demon Bonnie": 1,
+        "Flame Empress Chica": 1,
+        "Nightmare Bonnie": 1,
+        "Nightmare Fredbear": 1,
+        "Freddle": 1,
+        "Fredbear": 1,
+        "Nightmare": 1,
+        "Endo 04": 1,
+        "Scott": 1,
+        "The Crying Child": 1,
+        "Tarnished Spring Bonnie": 1,
+        "Commando Endo": 1,
+        "Rocketeer Mangle": 1,
+        "Cupcake Tank": 1,
+        "Enforcer Bonnie": 1,
+        "Abyssal Foxy": 1,
+        "Witch Toy Chica": 1,
+        "Sentinel Bonnie": 1,
+        "War Machine Foxy": 1,
+        "Phantom Balloon Boy": 1,
+        "Phantom Puppet": 1,
+        "Phantom Chica": 1,
+        "Phantom Cupcake": 1,
+        "Phantom Freddy": 1,
+        "Spring Bonnie": 1,
+        "Patriot Freddy": 1,
+        "Algae Fredbear": 1,
+        "Rad Freddy": 1,
+        "Seven Seas Foxy": 1,
+        "Withered Golden Freddy": 1,
+        "Pirate Withered Foxy": 1,
+        "Puppet": 1,
+        "Mangle": 1,
+        "Shadow Freddy": 1,
+        "Rockin Bonnie": 1,
+        "Endo": 1,
+        "Endo 02": 1,
+        "Withered Bonnie": 1,
+        "Plane Boy": 1,
+        "Overseer Foxy": 0.2,
+        "Deadeye Freddy": 0.2,
+        "Overclocked Puppeteer": 0.2,
+        "Valkyrie Prime": 0.2,
+        "RWQFSFASXC": 0.2,
+        "Nautic Crusher Mangle": 0.2,
+        "Agonized Springtrap": 0.2,
+        "Limitless Shadow": 0.2,
+        "Master Puppeteer": 0.2,
+        "Spring Trooper": 0.2,
+        "Overseer Lolbit": 0.2,
+        "Android Mangle": 0.2,
+        "Dread Pirate Foxy": 0.2,
+        "Sorcerer Ennard": 0.2,
+        "Vanny": 0.2,
+        "Candy Cadet": 0.2,
+        "Flaming Springtrap": 0.2,
+        "Soultown Fredbear": 0.2,
+        "The Band": 0.2,
+        "Dubstep Moondrop": 0.2,
+        "Classical Ballora": 0.2,
+        "Phonk Spring Bonnie": 0.2,
+        "8-Bit OMC": 0.2,
+        "Burntrap": 0.2,
+        "Soulmate Puppet": 0.2,
+        "Glamrock Bonnie": 0.2,
+        "Forge Withered Bonnie": 0.2,
+        "Ares Endoxus": 0.2,
+        "Kingtrap": 0.2,
+        "Blighted Foxy": 0.2,
+        "Shadow of Afton": 0.2,
+        "Stardrop": 0.2,
+        "Exotic Butters": 0.2,
+        "Moondrop": 0.2,
+        "DJ Music Man": 0.2,
+        "Lefty": 0.2,
+        "Winter Soldier Bonnie": 0.2,
+        "Bouncer": 0.2,
+        "Overlord Scott": 0.2,
+        "Icetrap": 0.2,
+        "Jolly Shadow Bonnie": 0.2,
+        "Frost Queen Ballora": 0.2,
+        "Jar of Pickles": 0.2,
+        "The King": 0.2,
+        "Stonetrap": 0.2,
+        "Diver Endo": 0.2,
+        "Widow Baby": 0.2,
+        "Popstar Chica": 0.2,
+        "Scraptrap": 0.2,
+        "Helpy": 0.2,
+        "Ennard": 0.2,
+        "Juggernaut Bonnie": 0.2,
+        "Blighted Endo Bonnie": 0.2,
+        "Scarecrow Foxy": 0.2,
+        "Dreadbear": 0.2,
+        "Eclipse Ballora": 0.2,
+        "Endo 05": 0.2,
+        "ITS ME": 0.2,
+        "Nightmarionne": 0.2,
+        "Outlaw Freddy": 0.2,
+        "Goliath Endo Freddy": 0.2,
+        "Galleon Foxy": 0.2,
+        "Springtrap": 0.2,
+        "Music Man": 0.2,
+        "Nightmare Mangle": 0.2,
+        "Circuit Breaker Freddy": 0.2,
+        "Glitched Puppeteer": 0.2,
+        "Valkyrie Chica": 0.2,
+        "Bounded Shadow": 0.2,
+        "Phantom Mangle": 0.2,
+        "Shadow Bonnie": 0.2,
+        "Leviathan Mangle": 0.2,
+        "Marionette's Puppeteer": 0.2,
+        "Blighted Endo Freddy": 0.2,
+        "Gaia Chica": 0.001,
+        "Coffee": 0.001,
+        "Dark Frostbear": 0.001,
+        "Popstar Music Man": 0.001,
+        "Frostbite Freddy": 0.05,
+        "Apollo's Moon": 0.05,
+        "Planet Buster Scott": 0.05,
+        "Queen of Hearts Ballora": 0.05,
+        "Apollo's Sun": 0.05,
+        "Titan Crusher Freddy": 0.05,
+        "Gilded Knight": 0.05,
+        "Old Man Krampus": 0.05,
+        "Black Ice Freddy": 0.05,
+        "Dark Knight Puppet": 0.05,
+        "Kronos Endo Freddy": 0.05,
+        "Gravelord Foxy": 0.05,
+        "Old Man Consequences": 0.05,
+        "RNB Chica": 0.05,
+        "Rap God Chica": 0.05,
+        "Astral Bonnie": 0.05
+      }
+    };
+
+    let inventory = {};
+    let shinyHunter = false;
+    let luck1_5 = false;
+    let luck2x = false;
+    let luck3x = false;
+
+    function getRandomItem(items, weights) {
+      let totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+      let randomNum = Math.random() * totalWeight;
+      for (let i = 0; i < items.length; i++) {
+        if (randomNum < weights[i]) {
+          return items[i];
+        }
+        randomNum -= weights[i];
+      }
+    }
+
+    function openPresents(quantity) {
+      const selectedPresent = document.getElementById("presentSelect").value;
+      const presentContents = presents[selectedPresent];
+      let items = Object.keys(presentContents);
+      let weights = Object.values(presentContents);
+      if (luck1_5) {
+        for (let i = 0; i < weights.length; i++) {
+          if (weights[i] <= 5) weights[i] *= 1.5;
+        }
+      }
+      if (luck2x) {
+        for (let i = 0; i < weights.length; i++) {
+          if (weights[i] <= 5) weights[i] *= 2;
+        }
+      }
+      if (luck3x) {
+        for (let i = 0; i < weights.length; i++) {
+          if (weights[i] <= 5) weights[i] *= 3;
+        }
+      }
+      let results = "";
+      let itemCount = {};
+
+      for (let i = 0; i < quantity; i++) {
+        const unit = getRandomItem(items, weights);
+        let shinyChance = shinyHunter ? 0.04 : 0.02;
+        let isShiny = Math.random() < shinyChance;
+        
+        let unitRarityValue = unitRarity[unit] || "unknown";
+        let color = rarityColors[unitRarityValue] || "black";
+        if (isShiny) {
+          color = "rainbow";
+        }
+        let itemName = isShiny ? `✨ ${unit} (Shiny)` : unit;
+
+        
+        if (!itemCount[itemName]) {
+          itemCount[itemName] = {
+            count: 0,
+            color: color
+          };
+        }
+        itemCount[itemName].count++;
+      }
+
+      
+      for (const [item, info] of Object.entries(itemCount)) {
+        results += `You got a <span class="${info.color === 'rainbow' ? 'rainbow-text' : ''}" style="color: ${info.color !== 'rainbow' ? info.color : ''};">${item} x${info.count}</span> from the ${selectedPresent} present!<br>`;
+        if (!inventory[item]) {
+          inventory[item] = {
+            count: 0,
+            color: info.color
+          };
+        }
+        inventory[item].count += info.count;
+      }
+
+      document.getElementById('result').innerHTML = results;
+      updateInventory();
+    }
+
+ function updateInventory() {
+    const inventoryList = document.getElementById('inventoryList');
+    inventoryList.innerHTML = '';
+
+   
+    const sortedInventory = Object.entries(inventory).sort((a, b) => {
+        const rarityA = unitRarity[a[0]] || "unknown";
+        const rarityB = unitRarity[b[0]] || "unknown";
+        const rarityOrder = ['uncommon', 'rare', 'epic', 'mythic', 'secret', 'nightmare', 'forgotten', 'apex', 'shiny'];
+        return rarityOrder.indexOf(rarityA) - rarityOrder.indexOf(rarityB);
+    });
+
+    sortedInventory.forEach(([item, info]) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.classList.add('item');
+        itemDiv.innerHTML = `<span class="${info.color === 'rainbow' ? 'rainbow-text' : ''}" style="color: ${info.color !== 'rainbow' ? info.color : ''};">${item} x${info.count}</span>`;
+        inventoryList.appendChild(itemDiv);
+    });
+}
+
+    document.getElementById('shinyHunter').addEventListener('change', (e) => {
+      shinyHunter = e.target.checked;
+    });
+    document.getElementById('luck1_5').addEventListener('change', (e) => {
+      luck1_5 = e.target.checked;
+    });
+    document.getElementById('luck2x').addEventListener('change', (e) => {
+      luck2x = e.target.checked;
+    });
+    document.getElementById('luck3x').addEventListener('change', (e) => {
+      luck3x = e.target.checked;
+    });
+
+    
+    document.getElementById('searchInventory').addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const inventoryItems = document.querySelectorAll('.item');
+      inventoryItems.forEach(item => {
+        const itemName = item.textContent.toLowerCase();
+        item.style.display = itemName.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    
+    document.getElementById('clearInventory').addEventListener('click', () => {
+      inventory = {};
+      updateInventory();
+    });
+
+    
+    document.getElementById('saveInventory').addEventListener('click', () => {
+      const serializedInventory = JSON.stringify(inventory);
+      localStorage.setItem('inventory', serializedInventory);
+      alert('Inventory saved!');
+    });
+
+    
+    document.getElementById('loadInventory').addEventListener('click', () => {
+      const loadedInventory = localStorage.getItem('inventory');
+      if (loadedInventory) {
+        inventory = JSON.parse(loadedInventory);
+        updateInventory();
+        alert('Inventory loaded!');
+      } else {
+        alert('No saved inventory found!');
+      }
+    });
+  </script>
+</body>
+
+</html>
+
+
+
